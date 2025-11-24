@@ -25,6 +25,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const prevIsGeneratingRef = useRef<boolean>(false);
+  const prevMessagesLenRef = useRef<number>(0);
 
   // Prefer instant scroll on touch devices to avoid viewport/keyboard jumps
   const isTouchDevice = typeof window !== 'undefined' && (('ontouchstart' in window) || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0));
@@ -40,15 +42,33 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   };
 
   useEffect(() => {
-    if (!mobilePreviewComponent || mobileView === 'chat') {
-        // Avoid jumping if the user is actively typing in an input/textarea
-        const active = typeof document !== 'undefined' ? document.activeElement : null;
-        if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || (active as HTMLElement).isContentEditable)) {
-          return;
-        }
+    if (mobilePreviewComponent && mobileView !== 'chat') return;
+
+    const prevIsGenerating = prevIsGeneratingRef.current;
+    const prevMessagesLen = prevMessagesLenRef.current;
+
+    // Compute whether we should auto-scroll:
+    // - Scroll when the user just sent a message (so they see their message)
+    // - Scroll when generation finished (so final output is visible)
+    const lastMsg = messages[messages.length - 1];
+    const lastRole = lastMsg?.role;
+
+    const userSentMsg = messages.length > prevMessagesLen && lastRole === 'user';
+    const generationFinished = prevIsGenerating && !isGenerating;
+
+    if (userSentMsg || generationFinished) {
+      // Avoid jumping if the user is actively typing in an input/textarea
+      const active = typeof document !== 'undefined' ? document.activeElement : null;
+      if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || (active as HTMLElement).isContentEditable)) {
+        // If the user is typing, don't force-scroll
+      } else {
         scrollToBottom();
+      }
     }
-  }, [messages, isGenerating, mobileView]); 
+
+    prevIsGeneratingRef.current = isGenerating;
+    prevMessagesLenRef.current = messages.length;
+  }, [messages, isGenerating, mobileView, mobilePreviewComponent]);
 
   // Auto-resize textarea
   useEffect(() => {
