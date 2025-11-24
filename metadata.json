@@ -1,0 +1,5 @@
+{
+  "name": "VibeFresh",
+  "description": "An AI-powered web generator creating unique, interactive websites using Gemini 3 Pro with a liquid glass and neumorphic aesthetic.",
+  "requestFramePermissions": []
+}

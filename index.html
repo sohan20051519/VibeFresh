@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VibeFresh | AI Web Architect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- PrismJS for Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <style>
+      :root {
+        /* Deep Dark Palette */
+        --c-darkest: #0a0a0a;  /* Main Background */
+        --c-dark: #171717;     /* Secondary / Sidebar / Navbar */
+        --c-medium: #333333;   /* Borders / Inputs / Hovers */
+        --c-light: #888888;    /* Muted Text / Icons */
+        --c-lightest: #ededed; /* Main Text */
+
+        /* Mapping to semantics */
+        --bg-background: var(--c-darkest);
+        --bg-surface: var(--c-dark);
+        
+        --text-main: var(--c-lightest);
+        --text-muted: var(--c-light);
+        
+        --border-color: var(--c-medium);
+      }
+
+      .dark {
+         --bg-background: #0a0a0a; 
+         --bg-surface: #171717;    
+         
+         --text-main: #ededed;    
+         --text-muted: #888888;   
+         
+         --border-color: #333333;
+      }
+
+      body {
+        background-color: var(--bg-background);
+        color: var(--text-main);
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg-background); 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--bg-surface);
+        border: 2px solid var(--bg-background);
+        border-radius: 6px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--border-color); 
+      }
+      
+      /* Utilities */
+      .glass-panel {
+        background: rgba(23, 23, 23, 0.7);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      
+      .input-ring {
+        transition: all 0.2s;
+      }
+      .input-ring:focus-within {
+        box-shadow: 0 0 0 2px var(--c-medium);
+      }
+    </style>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              mono: ['JetBrains Mono', 'monospace'],
+            },
+            colors: {
+              background: 'var(--bg-background)',
+              surface: 'var(--bg-surface)',
+              foreground: 'var(--text-main)',
+              muted: 'var(--text-muted)',
+              border: 'var(--border-color)',
+              
+              vibe: {
+                100: '#ededed', // Text Main
+                200: '#888888', // Text Muted
+                300: '#333333', // Borders / UI Elements
+                400: '#171717', // Surface / Components
+                500: '#0a0a0a', // Background
+              }
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.5s ease-out',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    
+    <!-- PrismJS Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+    "jszip": "https://esm.sh/jszip@3.10.1"
+  }
+}
+</script>
+</head>
+  <body class="antialiased selection:bg-vibe-300 selection:text-white h-screen overflow-hidden">
+    <div id="root" class="h-full"></div>
+  </body>
+</html>
