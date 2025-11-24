@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, ReactNode } from 'react';
 import { Message, GenerationStep } from '../types';
-import { Send, Bot, Loader2, Sparkles, Paperclip, Wand2 } from 'lucide-react';
+import { Send, Bot, Loader2, Sparkles, Paperclip, Wand2, RotateCcw } from 'lucide-react';
 import { enhancePrompt } from '../services/geminiService';
 
 interface ChatInterfaceProps {
@@ -10,6 +10,7 @@ interface ChatInterfaceProps {
   mobileView?: 'chat' | 'preview';
   setMobileView?: (view: 'chat' | 'preview') => void;
   mobilePreviewComponent?: ReactNode;
+  onRefreshPreview?: () => void;
 }
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({ 
@@ -18,7 +19,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   isGenerating,
   mobileView,
   setMobileView,
-  mobilePreviewComponent
+  mobilePreviewComponent,
+  onRefreshPreview
 }) => {
   const [input, setInput] = useState('');
   const [isEnhancing, setIsEnhancing] = useState(false);
@@ -273,6 +275,18 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     }`}
                   >
                     Preview
+                  </button>
+                  {/* Reload / Refresh Preview Button */}
+                  <button
+                    onClick={() => {
+                      // Switch to preview and call refresh handler if provided
+                      setMobileView && setMobileView('preview');
+                      onRefreshPreview && onRefreshPreview();
+                    }}
+                    className="ml-2 p-2 rounded-full bg-vibe-400/60 hover:bg-vibe-400/80 text-vibe-100 border border-vibe-300/40 transition-colors"
+                    title="Reload preview"
+                  >
+                    <RotateCcw className="w-4 h-4" />
                   </button>
                </div>
              </div>

@@ -130,6 +130,12 @@ const Workspace: React.FC<WorkspaceProps> = ({
     }
   };
 
+  const handleRefreshPreview = () => {
+    // Always bump preview version to force consumers (CodePreview iframe) to reload.
+    // This performs a soft refresh of the preview tab without re-running generation.
+    setPreview(prev => prev ? { ...prev, version: Date.now() } : prev);
+  };
+
   useEffect(() => {
     if (initialPrompt && shouldAutoGenerate && !initialized) {
       handleSendMessage(initialPrompt);
@@ -150,6 +156,7 @@ const Workspace: React.FC<WorkspaceProps> = ({
           messages={messages} 
           onSendMessage={handleSendMessage}
           isGenerating={isGenerating}
+          onRefreshPreview={handleRefreshPreview}
         />
       </div>
 
@@ -176,6 +183,7 @@ const Workspace: React.FC<WorkspaceProps> = ({
                 isMobile={true} 
               />
             }
+            onRefreshPreview={handleRefreshPreview}
          />
       </div>
     </div>

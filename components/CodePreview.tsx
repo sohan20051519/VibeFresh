@@ -187,13 +187,6 @@ const CodePreview: React.FC<CodePreviewProps> = ({ preview, isGenerating, isMobi
                 sandbox="allow-scripts allow-modals allow-forms allow-popups allow-same-origin"
                 title="Mobile Preview"
               />
-              <button 
-                onClick={() => setIframeKey(prev => prev + 1)}
-                className="absolute bottom-20 right-4 p-2 bg-black/80 text-white rounded-full shadow-lg backdrop-blur-sm active:scale-95 transition-transform"
-                title="Reload Preview"
-              >
-                <RotateCw className="w-5 h-5" />
-              </button>
           </div>
       );
   }
@@ -235,13 +228,6 @@ const CodePreview: React.FC<CodePreviewProps> = ({ preview, isGenerating, isMobi
               <button onClick={() => setViewport('tablet')} className={`p-1.5 rounded hover:bg-vibe-300 transition-colors ${viewport === 'tablet' ? 'text-vibe-100' : 'text-vibe-200'}`} title="Tablet"><Tablet className="w-4 h-4" /></button>
               <button onClick={() => setViewport('desktop')} className={`p-1.5 rounded hover:bg-vibe-300 transition-colors ${viewport === 'desktop' ? 'text-vibe-100' : 'text-vibe-200'}`} title="Desktop"><Monitor className="w-4 h-4" /></button>
             </div>
-            <button 
-              onClick={() => setIframeKey(prev => prev + 1)}
-              className="p-2 text-vibe-200 hover:text-vibe-100 transition-colors hover:bg-vibe-300 rounded-lg"
-              title="Reload Preview"
-            >
-              <RotateCw className="w-4 h-4" />
-            </button>
           </div>
         )}
       </div>
