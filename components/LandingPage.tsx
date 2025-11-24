@@ -82,7 +82,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStart, history = [], onHist
   ];
 
   return (
-    <div className="flex-1 flex flex-col relative overflow-y-auto w-full h-full scroll-smooth scrollbar-thin scrollbar-thumb-vibe-300 scrollbar-track-transparent">
+    <div className="flex-1 flex flex-col relative overflow-y-auto w-full h-full scrollbar-thin scrollbar-thumb-vibe-300 scrollbar-track-transparent">
       
       {/* Hidden File Input */}
       <input 

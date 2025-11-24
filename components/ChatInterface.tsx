@@ -26,12 +26,26 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  // Prefer instant scroll on touch devices to avoid viewport/keyboard jumps
+  const isTouchDevice = typeof window !== 'undefined' && (('ontouchstart' in window) || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0));
+
+  const scrollToBottom = (options?: ScrollIntoViewOptions) => {
+    try {
+      const behavior = isTouchDevice ? 'auto' : 'smooth';
+      messagesEndRef.current?.scrollIntoView({ behavior: behavior as ScrollBehavior, block: 'nearest' });
+    } catch (err) {
+      // Fallback in case scrollIntoView options aren't supported
+      messagesEndRef.current?.scrollIntoView();
+    }
   };
 
   useEffect(() => {
     if (!mobilePreviewComponent || mobileView === 'chat') {
+        // Avoid jumping if the user is actively typing in an input/textarea
+        const active = typeof document !== 'undefined' ? document.activeElement : null;
+        if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || (active as HTMLElement).isContentEditable)) {
+          return;
+        }
         scrollToBottom();
     }
   }, [messages, isGenerating, mobileView]); 
