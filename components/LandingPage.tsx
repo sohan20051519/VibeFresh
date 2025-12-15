@@ -159,7 +159,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
 
       {/* Scrollable Content */}
       <div className="relative z-10 flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-vibe-300 scrollbar-track-transparent">
-        <div className="flex flex-col items-center justify-center min-h-[calc(100dvh-100px)] px-4 pt-32 md:pt-64 pb-32 max-w-6xl mx-auto w-full">
+        <div className="flex flex-col items-center justify-center min-h-[100dvh] px-4 pt-0 md:pt-48 pb-12 max-w-6xl mx-auto w-full">
 
           {/* Hero Title */}
           <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold tracking-tighter mb-8 md:mb-12 text-center drop-shadow-2xl px-4">

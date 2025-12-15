@@ -311,7 +311,7 @@ const Navbar: React.FC<NavbarProps> = ({
             {/* Refresh Preview */}
             <button
               onClick={() => onRefreshPreview?.()}
-              className="p-2 rounded-xl text-vibe-200 hover:bg-white/10 hover:text-white transition-all hidden sm:flex"
+              className="p-2 rounded-xl text-vibe-200 hover:bg-white/10 hover:text-white transition-all flex"
               title="Refresh Preview"
             >
               <RotateCw className="w-5 h-5" />
@@ -320,7 +320,7 @@ const Navbar: React.FC<NavbarProps> = ({
             {/* Full Screen Toggle */}
             <button
               onClick={() => setIsPreviewFullScreen?.(!isPreviewFullScreen)}
-              className={`p-2 rounded-xl text-vibe-200 hover:bg-white/10 hover:text-white transition-all hidden sm:flex ${isPreviewFullScreen ? 'text-[#57B9FF] bg-[#57B9FF]/10' : ''}`}
+              className={`p-2 rounded-xl text-vibe-200 hover:bg-white/10 hover:text-white transition-all flex ${isPreviewFullScreen ? 'text-[#57B9FF] bg-[#57B9FF]/10' : ''}`}
               title={isPreviewFullScreen ? "Exit Full Screen" : "Enter Full Screen"}
             >
               {isPreviewFullScreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
@@ -330,7 +330,7 @@ const Navbar: React.FC<NavbarProps> = ({
             {preview && (
               <button
                 onClick={handleDownload}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-[#57B9FF]/10 text-[#57B9FF] hover:bg-[#57B9FF]/20 transition-all border border-[#57B9FF]/20 shadow-[0_0_10px_rgba(87,185,255,0.1)]"
+                className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold bg-[#57B9FF]/10 text-[#57B9FF] hover:bg-[#57B9FF]/20 transition-all border border-[#57B9FF]/20 shadow-[0_0_10px_rgba(87,185,255,0.1)]"
                 title="Download Zip"
               >
                 <Download className="w-4 h-4" />
@@ -340,9 +340,8 @@ const Navbar: React.FC<NavbarProps> = ({
 
             {/* Publish Button */}
             <button
-              // onClick={() => setShowPublishDialog(true)}
               disabled
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-600/50 text-white/50 text-xs font-bold transition-all cursor-not-allowed border border-white/5"
+              className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-600/50 text-white/50 text-xs font-bold transition-all cursor-not-allowed border border-white/5"
               title="Temporarily Disabled"
             >
               <Globe className="w-3.5 h-3.5" />
