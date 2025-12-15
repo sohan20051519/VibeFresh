@@ -207,7 +207,7 @@ const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <nav className={`h-16 absolute top-6 md:top-0 left-0 w-full z-50 flex items-center ${appState === AppState.WORKSPACE ? 'justify-end' : 'justify-between'} px-2 md:px-6 lg:px-8 transition-all duration-300 border-b border-white/5 ${appState === AppState.WORKSPACE ? 'bg-black' : 'bg-transparent backdrop-blur-sm'}`}>
+    <nav className={`h-16 absolute top-0 left-0 w-full z-50 flex items-center ${appState === AppState.WORKSPACE ? 'justify-end' : 'justify-between'} px-4 md:px-8 transition-all duration-300 border-b border-white/5 ${appState === AppState.WORKSPACE ? 'bg-black/80 backdrop-blur-md' : 'bg-transparent backdrop-blur-sm'}`}>
 
       {/* Centered Workspace Controls (Desktop) */}
       {appState === AppState.WORKSPACE && (

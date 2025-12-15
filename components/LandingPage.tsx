@@ -159,10 +159,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
 
       {/* Scrollable Content */}
       <div className="relative z-10 flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-vibe-300 scrollbar-track-transparent">
-        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-100px)] px-4 pt-64 pb-32 max-w-6xl mx-auto w-full">
+        <div className="flex flex-col items-center justify-center min-h-[calc(100dvh-100px)] px-4 pt-32 md:pt-64 pb-32 max-w-6xl mx-auto w-full">
 
           {/* Hero Title */}
-          <h1 className="text-6xl md:text-8xl font-bold tracking-tighter mb-12 text-center drop-shadow-2xl">
+          <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold tracking-tighter mb-8 md:mb-12 text-center drop-shadow-2xl px-4">
             <span className="text-vibe-100">Think it. </span>
             <span className="text-white bg-clip-text text-transparent bg-gradient-to-r from-blue-100 to-white">Vibe it!</span>
           </h1>
@@ -211,7 +211,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
                     }
                   }}
                   placeholder={isDragging ? "Drop images or files here..." : "Describe your idea..."}
-                  className="w-full bg-transparent text-xl text-white placeholder-white/40 px-6 py-6 min-h-[80px] max-h-[200px] resize-none focus:outline-none leading-relaxed selection:bg-blue-500/30 font-medium"
+                  className="w-full bg-transparent text-base md:text-xl text-white placeholder-white/40 px-4 py-4 md:px-6 md:py-6 min-h-[60px] md:min-h-[80px] max-h-[200px] resize-none focus:outline-none leading-relaxed selection:bg-blue-500/30 font-medium"
                   rows={1}
                 />
               </div>
