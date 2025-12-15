@@ -320,7 +320,7 @@ const Navbar: React.FC<NavbarProps> = ({
             {/* Full Screen Toggle */}
             <button
               onClick={() => setIsPreviewFullScreen?.(!isPreviewFullScreen)}
-              className={`p-2 rounded-xl text-vibe-200 hover:bg-white/10 hover:text-white transition-all flex ${isPreviewFullScreen ? 'text-[#57B9FF] bg-[#57B9FF]/10' : ''}`}
+              className={`p-2 rounded-xl text-vibe-200 hover:bg-white/10 hover:text-white transition-all hidden sm:flex ${isPreviewFullScreen ? 'text-[#57B9FF] bg-[#57B9FF]/10' : ''}`}
               title={isPreviewFullScreen ? "Exit Full Screen" : "Enter Full Screen"}
             >
               {isPreviewFullScreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
