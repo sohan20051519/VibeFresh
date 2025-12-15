@@ -323,24 +323,12 @@ const CodePreview: React.FC<CodePreviewProps> = ({
     );
   };
 
-  // Mobile View: Pure Preview Iframe
-  if (isMobile) {
-    return (
-      <div className="absolute inset-0 w-full h-full bg-white z-10">
-        <iframe
-          key={iframeKey}
-          srcDoc={combinedHtml}
-          className="w-full h-full bg-white border-0"
-          sandbox="allow-scripts allow-modals allow-forms allow-popups allow-same-origin"
-          title="Mobile Preview"
-        />
-      </div>
-    );
-  }
+  // Mobile View: Pure Preview Iframe Logic merged below for consistent FullScreen handling
+  // if (isMobile) { ... } REMOVED to allow unified FullScreen logic
 
-  // Desktop View
+  // Unified View
   return (
-    <div className={`flex flex-col bg-vibe-500 transition-all duration-300 ${isFullScreen ? 'fixed inset-0 z-[100]' : 'h-full w-full'}`}>
+    <div className={`flex flex-col bg-vibe-500 transition-all duration-300 ${isFullScreen || (isMobile && activeTab === 'preview') ? 'fixed inset-0 z-[100]' : 'h-full w-full'}`}>
       {/* Floating Minimize Button for Full Screen Mode */}
       {isFullScreen && (
         <button
@@ -352,12 +340,10 @@ const CodePreview: React.FC<CodePreviewProps> = ({
         </button>
       )}
 
-
-
       {/* Main Content Area */}
       <div className="flex-1 flex overflow-hidden relative">
         {/* File Explorer - Only visible in Code tab */}
-        {activeTab === 'code' && (
+        {activeTab === 'code' && !isMobile && ( // Hide explorer on mobile generally unless requested, keeping simplified
           <div className="w-64 flex-none bg-vibe-500 border-r border-vibe-300 flex flex-col animate-in slide-in-from-left-5 duration-200">
             <div className="h-8 flex items-center px-4 text-[10px] font-bold text-vibe-200 uppercase tracking-widest mt-2">
               Explorer
@@ -396,7 +382,7 @@ const CodePreview: React.FC<CodePreviewProps> = ({
               </pre>
             </div>
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-[#121212] p-8">
+            <div className={`absolute inset-0 flex items-center justify-center bg-[#121212] ${isMobile ? 'p-0' : 'p-8'}`}>
               {/* Thinking State Overlay: Show ONLY if generating AND no files yet (Architecting Phase) */}
               {isGenerating && (!preview?.files || preview.files.length === 0) ? (
                 <div className="flex flex-col items-center justify-center gap-4 animate-in fade-in zoom-in duration-500">
@@ -412,9 +398,12 @@ const CodePreview: React.FC<CodePreviewProps> = ({
                   </div>
                 </div>
               ) : (
-                <div className={`h-full bg-white transition-all duration-500 ease-in-out shadow-2xl overflow-hidden ${viewport === 'mobile' ? 'w-[375px] rounded-[2rem] border-[8px] border-[#333]' :
-                  viewport === 'tablet' ? 'w-[768px] rounded-[1.5rem] border-[8px] border-[#333]' :
-                    'w-full rounded-lg border border-[#333]'
+                <div className={`h-full bg-white transition-all duration-500 ease-in-out shadow-2xl overflow-hidden ${
+                  // On mobile, force full width/height with no borders if full screen or just mobile view
+                  isMobile ? 'w-full h-full rounded-none border-0' :
+                    viewport === 'mobile' ? 'w-[375px] rounded-[2rem] border-[8px] border-[#333]' :
+                      viewport === 'tablet' ? 'w-[768px] rounded-[1.5rem] border-[8px] border-[#333]' :
+                        'w-full rounded-lg border border-[#333]'
                   }`}>
                   <iframe
                     key={`${iframeKey}-${refreshKey}`} // Combine refreshKey for manual reload
@@ -424,7 +413,7 @@ const CodePreview: React.FC<CodePreviewProps> = ({
                       '<div>Rendered successfully</div>' +
                       '<style>@keyframes spin { to { transform: rotate(360deg); } }</style>' +
                       '</div>')}
-                    className="w-full h-full bg-white"
+                    className="w-full h-full bg-white transition-opacity duration-300"
                     sandbox="allow-scripts allow-modals allow-forms allow-popups allow-same-origin"
                   />
                 </div>

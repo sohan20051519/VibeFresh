@@ -326,18 +326,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 >
                   Preview
                 </button>
-                {/* Reload / Refresh Preview Button */}
-                <button
-                  onClick={() => {
-                    // Switch to preview and call refresh handler if provided
-                    setMobileView && setMobileView('preview');
-                    onRefreshPreview && onRefreshPreview();
-                  }}
-                  className="ml-2 p-2 rounded-full bg-vibe-400/60 hover:bg-vibe-400/80 text-vibe-100 border border-vibe-300/40 transition-colors"
-                  title="Reload preview"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                </button>
+
               </div>
             </div>
           )}
