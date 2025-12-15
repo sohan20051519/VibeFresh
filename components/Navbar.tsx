@@ -341,7 +341,7 @@ const Navbar: React.FC<NavbarProps> = ({
             {/* Publish Button */}
             <button
               disabled
-              className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-600/50 text-white/50 text-xs font-bold transition-all cursor-not-allowed border border-white/5"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-600/50 text-white/50 text-xs font-bold transition-all cursor-not-allowed border border-white/5"
               title="Temporarily Disabled"
             >
               <Globe className="w-3.5 h-3.5" />
