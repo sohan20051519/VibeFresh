@@ -300,14 +300,14 @@ const AppContent: React.FC = () => {
 
       {/* Main Layout - Content Area */}
       <div className={`flex-1 flex relative transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]
-        ${isWorkspace ? 'h-screen pt-16' : 'h-screen'}
+        ${isWorkspace ? 'h-full pt-20 md:pt-16' : 'h-full'}
         ${showNavbar ? (isSidebarExpanded ? 'md:ml-72' : 'md:ml-[60px]') : ''}
       `}>
         <BackgroundEffects />
 
         {showNavbar && (
           <Navbar
-            appState={isWorkspace ? 'WORKSPACE' : 'LANDING'} // Clean this up later
+            appState={isWorkspace ? AppState.WORKSPACE : AppState.LANDING}
             setAppState={() => { }} // No longer used for nav
             theme={theme}
             toggleTheme={toggleTheme}

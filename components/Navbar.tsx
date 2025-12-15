@@ -19,6 +19,7 @@ interface NavbarProps {
   mobileView?: 'chat' | 'preview';
   setMobileView?: (view: 'chat' | 'preview') => void;
   isMobileSidebarOpen: boolean;
+  activeCodeTab?: 'preview' | 'code';
   setActiveCodeTab?: (tab: 'preview' | 'code') => void;
   previewViewport?: 'mobile' | 'tablet' | 'desktop';
   setPreviewViewport?: (viewport: 'mobile' | 'tablet' | 'desktop') => void;
@@ -360,8 +361,8 @@ const Navbar: React.FC<NavbarProps> = ({
             >
               {/* Credits badge - visible on desktop */}
               <div className={`hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold ${(user.credits || 0) < 25
-                  ? 'bg-red-500/20 text-red-400 border border-red-500/30'
-                  : 'bg-white/5 text-white/80 border border-white/10'
+                ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                : 'bg-white/5 text-white/80 border border-white/10'
                 }`}>
                 <CreditCard className="w-3.5 h-3.5" />
                 <span>{user.credits || 0}</span>
