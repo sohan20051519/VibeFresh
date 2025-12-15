@@ -6,6 +6,9 @@ export interface Message {
   timestamp: number;
   isError?: boolean;
   steps?: GenerationStep[]; // For showing the realtime process
+  actions?: ('preview' | 'explorer')[]; // For interactive buttons after completion
+  attachments?: string[]; // Base64 encoded images
+  creditsRemaining?: number; // Credits remaining after this generation
 }
 
 export interface GenerationStep {
@@ -27,7 +30,9 @@ export interface CodeSnippet {
 
 export enum AppState {
   LANDING = 'LANDING',
-  WORKSPACE = 'WORKSPACE'
+  WORKSPACE = 'WORKSPACE',
+  LOGIN = 'LOGIN',
+  SIGNUP = 'SIGNUP'
 }
 
 export interface GeneratedPreview {
@@ -40,4 +45,21 @@ export interface HistoryItem {
   prompt: string;
   timestamp: number;
   files: ProjectFile[];
+  messages?: Message[];
+  is_starred?: boolean; // New field
+}
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  full_name?: string;
+  avatar_url?: string;
+  credits: number;
+  created_at?: string;
+}
+
+export interface AuthState {
+  user: UserProfile | null;
+  session: any | null; // using any for supabase Session to avoid circular deps if possible, or usually just import from supabase-js in types if needed, but better to keep types clean. Actually let's just keep it simple.
+  loading: boolean;
 }

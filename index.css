@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    /* Deep Dark Palette */
+    --c-darkest: #0a0a0a;
+    /* Main Background */
+    --c-dark: #171717;
+    /* Secondary / Sidebar / Navbar */
+    --c-medium: #333333;
+    /* Borders / Inputs / Hovers */
+    --c-light: #888888;
+    /* Muted Text / Icons */
+    --c-lightest: #ededed;
+    /* Main Text */
+
+    /* Mapping to semantics */
+    --bg-background: var(--c-darkest);
+    --bg-surface: var(--c-dark);
+
+    --text-main: var(--c-lightest);
+    --text-muted: var(--c-light);
+
+    --border-color: var(--c-medium);
+}
+
+.dark {
+    --bg-background: #0a0a0a;
+    --bg-surface: #171717;
+
+    --text-main: #ededed;
+    --text-muted: #888888;
+
+    --border-color: #333333;
+}
+
+body {
+    background-color: var(--bg-background);
+    color: var(--text-main);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-background);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--bg-surface);
+    border: 2px solid var(--bg-background);
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--border-color);
+}
+
+/* Utilities */
+.glass-panel {
+    background: rgba(23, 23, 23, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.input-ring {
+    transition: all 0.2s;
+}
+
+.input-ring:focus-within {
+    box-shadow: 0 0 0 2px var(--c-medium);
+}

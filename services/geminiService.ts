@@ -14,7 +14,7 @@ const getClient = () => {
 
 export const enhancePrompt = async (originalPrompt: string): Promise<string> => {
   const ai = getClient();
-  
+
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-preview',
@@ -44,7 +44,7 @@ export const generateCodeStream = async (
   currentFiles: ProjectFile[],
   onStep: (step: GenerationStep) => void,
   onFileUpdate: (files: ProjectFile[]) => void
-): Promise<string> => {
+): Promise<{ files: ProjectFile[], generatedText: string }> => {
   const ai = getClient();
   const codeModel = 'gemini-3-pro-preview';
 
@@ -55,15 +55,15 @@ export const generateCodeStream = async (
     onStep(step);
     return step;
   };
-  
+
   const completeStep = (step: GenerationStep) => {
     step.status = 'completed';
-    onStep({ ...step }); 
+    onStep({ ...step });
   };
 
   // 1. Start initial step
   let currentStep: GenerationStep = addStep("Architecting vibe & structure...");
-  
+
   const systemInstruction = `
     You are VibeFresh, an elite AI Frontend Architect.
     Your goal is to generate "Lovable.dev" quality, production-ready websites.
@@ -74,6 +74,11 @@ export const generateCodeStream = async (
     <file name="filename.ext">
       ... content ...
     </file>
+    
+    CONVERSATIONAL RESPONSE:
+    You can and should provide a brief, helpful explanation or confirmation of what you built/changed.
+    This text should be outside the <file> tags.
+    If the user asks a question, answer it directly.
 
     REQUIRED FILES (For new projects):
     1. index.html (Main structure, import tailwind via CDN)
@@ -115,12 +120,12 @@ export const generateCodeStream = async (
     model: codeModel,
     config: {
       systemInstruction,
-      temperature: 0.7, 
+      temperature: 0.7,
     }
   });
 
   let fullPrompt = "";
-  
+
   // Inject current files into context if they exist
   if (currentFiles.length > 0) {
     fullPrompt += "CURRENT PROJECT STATE:\n";
@@ -134,32 +139,32 @@ export const generateCodeStream = async (
     const contextStr = history.slice(-10).map(m => `${m.role.toUpperCase()}: ${m.text}`).join('\n');
     fullPrompt += `HISTORY:\n${contextStr}\n\n`;
   }
-  
+
   fullPrompt += `NEW REQUEST: ${prompt}`;
 
   try {
     const result = await chat.sendMessageStream({ message: fullPrompt });
-    
+
     let buffer = "";
     // Initialize files with current state (deep copy to avoid mutation issues during render)
     const files: ProjectFile[] = currentFiles.map(f => ({ ...f }));
     let currentFile: ProjectFile | null = null;
-    
+
     for await (const chunk of result) {
       const text = chunk.text || "";
       buffer += text;
-      
+
       // Check for status updates
       const statusMatches = [...buffer.matchAll(/\[STATUS\] (.*?)(?:\n|$)/g)];
       if (statusMatches.length > 0) {
         const lastMatch = statusMatches[statusMatches.length - 1];
         const statusText = lastMatch[1].trim();
-        
+
         if (steps[steps.length - 1]?.label !== statusText) {
-           if (currentStep && currentStep.status === 'running') {
-             completeStep(currentStep);
-           }
-           currentStep = addStep(statusText);
+          if (currentStep && currentStep.status === 'running') {
+            completeStep(currentStep);
+          }
+          currentStep = addStep(statusText);
         }
       }
 
@@ -168,79 +173,70 @@ export const generateCodeStream = async (
       let match;
       while ((match = startTagRegex.exec(buffer)) !== null) {
         const fileName = match[1];
-        
-        // If file exists, we will update it. If not, we create it.
-        // We need to determine if we have already "switched" to this file in this stream session
-        // However, since we initialized `files` with `currentFiles`, we need to be careful not to 
-        // overwrite content until we actually have new content.
-        
+
         if (currentFile?.name !== fileName) {
-           const existingFileIndex = files.findIndex(f => f.name === fileName);
-           if (existingFileIndex !== -1) {
-              // We are about to rewrite an existing file. 
-              // We set currentFile to reference it, but we don't clear content yet 
-              // because the parsing logic below extracts the *new* content from the buffer.
-              currentFile = files[existingFileIndex];
-              // Important: The parsing logic below uses `lastIndexOf(fileStartTag)`.
-              // As the buffer grows, we will extract the new content.
-           } else {
-              // New file
-              const language = fileName.endsWith('.html') ? 'html' : fileName.endsWith('.css') ? 'css' : 'javascript';
-              currentFile = { name: fileName, language, content: '' };
-              files.push(currentFile);
-           }
+          const existingFileIndex = files.findIndex(f => f.name === fileName);
+          if (existingFileIndex !== -1) {
+            currentFile = files[existingFileIndex];
+          } else {
+            const language = fileName.endsWith('.html') ? 'html' : fileName.endsWith('.css') ? 'css' : 'javascript';
+            currentFile = { name: fileName, language, content: '' };
+            files.push(currentFile);
+          }
         }
       }
 
       if (currentFile) {
-         const fileStartTag = `<file name="${currentFile.name}">`;
-         const startIndex = buffer.lastIndexOf(fileStartTag);
-         if (startIndex !== -1) {
-            let content = buffer.substring(startIndex + fileStartTag.length);
-            
-            const endTagIndex = content.indexOf('</file>');
-            if (endTagIndex !== -1) {
-                content = content.substring(0, endTagIndex);
-            }
-            
-            // Update the file content in real-time
-            currentFile.content = content;
-            onFileUpdate([...files]); // Send new array reference
-         }
+        const fileStartTag = `<file name="${currentFile.name}">`;
+        const startIndex = buffer.lastIndexOf(fileStartTag);
+        if (startIndex !== -1) {
+          let content = buffer.substring(startIndex + fileStartTag.length);
+
+          const endTagIndex = content.indexOf('</file>');
+          if (endTagIndex !== -1) {
+            content = content.substring(0, endTagIndex);
+          }
+
+          currentFile.content = content;
+          onFileUpdate([...files]);
+        }
       }
     }
-    
+
     // Final Parsing pass to ensure clean content
-    // We only update the files that were actually in the output buffer
     const fileRegex = /<file name="(.*?)">([\s\S]*?)<\/file>/g;
     let fileMatch;
     while ((fileMatch = fileRegex.exec(buffer)) !== null) {
-        const fileName = fileMatch[1];
-        const content = fileMatch[2].trim();
-        
-        const existingIndex = files.findIndex(f => f.name === fileName);
-        if (existingIndex !== -1) {
-            files[existingIndex].content = content;
-        } else {
-            files.push({
-                name: fileName,
-                language: fileName.endsWith('.html') ? 'html' : fileName.endsWith('.css') ? 'css' : 'javascript',
-                content: content
-            });
-        }
+      const fileName = fileMatch[1];
+      const content = fileMatch[2].trim();
+
+      const existingIndex = files.findIndex(f => f.name === fileName);
+      if (existingIndex !== -1) {
+        files[existingIndex].content = content;
+      } else {
+        files.push({
+          name: fileName,
+          language: fileName.endsWith('.html') ? 'html' : fileName.endsWith('.css') ? 'css' : 'javascript',
+          content: content
+        });
+      }
     }
 
-    return JSON.stringify(files);
+    // Extract text that is NOT inside file tags or status tags
+    let generatedText = buffer.replace(/<file name=".*?">[\s\S]*?<\/file>/g, '').replace(/\[STATUS\].*?(?:\n|$)/g, '').trim();
+    generatedText = generatedText.replace(/\n{3,}/g, '\n\n');
+
+    return { files, generatedText };
 
   } catch (error) {
     console.error("Gemini API Error:", error);
     throw error;
   } finally {
     if (currentStep && currentStep.status === 'running') {
-        completeStep(currentStep);
+      completeStep(currentStep);
     }
     steps.forEach(s => {
-        if (s.status === 'running') completeStep(s);
+      if (s.status === 'running') completeStep(s);
     });
   }
 };
