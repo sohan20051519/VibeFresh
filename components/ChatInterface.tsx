@@ -186,7 +186,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       <div className="flex-1 overflow-hidden relative w-full">
         {/* Messages List */}
         <div className={`
-          absolute inset-0 overflow-y-auto p-4 space-y-6 custom-scrollbar bg-vibe-400 transition-opacity duration-300
+          absolute inset-0 overflow-y-auto ${isMobile ? 'p-4 pb-32' : 'p-4'} space-y-6 custom-scrollbar bg-vibe-400 transition-opacity duration-300
           ${showPreview ? 'opacity-0 pointer-events-none z-0' : 'opacity-100 z-10'}
         `}>
           {messages.length === 0 && (
@@ -301,7 +301,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       </div>
 
       {/* Input Area */}
-      <div className={`flex-none bg-vibe-400 border-t border-vibe-300/30 z-30 ${isMobile ? 'p-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))]' : 'p-4'}`}>
+      <div className={`flex-none bg-vibe-400 border-t border-vibe-300/30 z-30 ${isMobile ? 'fixed bottom-0 left-0 right-0 p-2' : 'p-4'}`}>
         <div className="relative group">
 
           {/* Mobile Toggle - Floating Above Input */}
