@@ -37,21 +37,24 @@ export const projectService = {
     },
 
     async getProject(projectId: string): Promise<HistoryItem | null> {
-        const { data, error } = await supabase
-            .from('projects')
-            .select('*')
-            .eq('id', projectId)
-            .single();
+        // Use the RPC function to allow public access to single projects (for preview)
+        // bypassing strict RLS that protects the main listing.
+        const { data, error } = await supabase.rpc('get_project_public', { p_id: projectId });
 
         if (error) {
             console.error('Error fetching project:', error);
             return null;
         }
 
-        let parsedFiles = data.files;
-        if (typeof data.files === 'string') {
+        // RPC returns a set/array, check if empty
+        if (!data || data.length === 0) return null;
+
+        const projectData = data[0]; // Take first result
+
+        let parsedFiles = projectData.files;
+        if (typeof projectData.files === 'string') {
             try {
-                parsedFiles = JSON.parse(data.files);
+                parsedFiles = JSON.parse(projectData.files);
             } catch (e) {
                 console.error("Failed to parse project files:", e);
                 parsedFiles = [];
@@ -59,11 +62,11 @@ export const projectService = {
         }
 
         return {
-            id: data.id,
-            prompt: data.prompt,
-            timestamp: new Date(data.updated_at).getTime(),
+            id: projectData.id,
+            prompt: projectData.prompt,
+            timestamp: new Date(projectData.updated_at).getTime(),
             files: parsedFiles as ProjectFile[],
-            messages: data.messages || []
+            messages: projectData.messages || []
         };
     },
 
