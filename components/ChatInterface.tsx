@@ -259,11 +259,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                           <button
                             key={action}
                             onClick={() => onActionClick && onActionClick(action)}
+                            disabled={isGenerating && action === 'preview'}
                             className={`
                               flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all hover:scale-105 active:scale-95 shadow-lg
                               ${action === 'preview'
                                 ? 'bg-[#57B9FF]/10 text-[#57B9FF] border border-[#57B9FF]/30 hover:bg-[#57B9FF]/20 shadow-[0_0_15px_rgba(87,185,255,0.1)]'
                                 : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 hover:bg-indigo-500/20 shadow-[0_0_15px_rgba(99,102,241,0.1)]'}
+                              ${isGenerating && action === 'preview' ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}
                             `}
                           >
                             {action === 'preview' && <Eye className="w-3.5 h-3.5" />}

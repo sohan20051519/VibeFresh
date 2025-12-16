@@ -222,7 +222,8 @@ const Navbar: React.FC<NavbarProps> = ({
             </button>
             <button
               onClick={() => setActiveCodeTab?.('preview')}
-              className={`px-4 py-1.5 rounded-md text-xs font-medium transition-all flex items-center gap-2 ${activeCodeTab === 'preview' ? 'bg-[#57B9FF]/10 text-[#57B9FF] border border-[#57B9FF]/20 shadow-[0_0_10px_rgba(87,185,255,0.1)]' : 'text-vibe-200 hover:text-white'}`}
+              disabled={isGenerating}
+              className={`px-4 py-1.5 rounded-md text-xs font-medium transition-all flex items-center gap-2 ${activeCodeTab === 'preview' ? 'bg-[#57B9FF]/10 text-[#57B9FF] border border-[#57B9FF]/20 shadow-[0_0_10px_rgba(87,185,255,0.1)]' : 'text-vibe-200 hover:text-white'} ${isGenerating ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               <Eye className="w-3.5 h-3.5" /> Preview
             </button>

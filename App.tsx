@@ -218,6 +218,7 @@ const AppContent: React.FC = () => {
     // Clear any existing project state to ensure a fresh start
     setActiveProjectId(null);
     setPreview(null);
+    setActiveCodeTab('preview'); // Reset to preview initially
 
     if (prompt) {
       setInitialPrompt(prompt);
@@ -242,6 +243,7 @@ const AppContent: React.FC = () => {
     // Navigate to the project URL. The useEffect/Route logic should handle the loading.
     navigate(`/built/${item.id}`);
     setIsSidebarMobileOpen(false);
+    setActiveCodeTab('preview'); // Reset to preview when opening history
   };
 
   const showNavbar = location.pathname !== '/signin' && location.pathname !== '/signup';

@@ -240,7 +240,7 @@ const Workspace: React.FC<WorkspaceProps> = ({
         const allMessages = [...messages, userMsg, {
           ...botMsg,
           text: generatedText || "Task completed!", // Use generated text if available immediately, or fallback
-          actions: ['preview', 'explorer']
+          actions: ['preview', 'explorer'] as ('preview' | 'explorer')[]
         }];
         onSuccess(text, finalFiles, allMessages);
       }
@@ -255,7 +255,7 @@ const Workspace: React.FC<WorkspaceProps> = ({
           return {
             ...msg,
             text: finalText,
-            actions: ['preview', 'explorer'],
+            actions: ['preview', 'explorer'] as ('preview' | 'explorer')[],
             creditsRemaining: newCredits
           };
         }

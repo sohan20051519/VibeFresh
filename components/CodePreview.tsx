@@ -82,17 +82,21 @@ const CodePreview: React.FC<CodePreviewProps> = ({
 
   // Auto-scroll
   useEffect(() => {
-    if (!isMobile && isGenerating && activeTab === 'code' && codeContainerRef.current) {
+    // Scroll if generating OR if user selected code tab
+    if (!isMobile && (isGenerating || activeTab === 'code') && codeContainerRef.current) {
       codeContainerRef.current.scrollTop = codeContainerRef.current.scrollHeight;
     }
   }, [preview, isGenerating, activeTab, activeFile, isMobile]);
 
   // Syntax Highlight
   useEffect(() => {
-    if (!isMobile && activeTab === 'code' && codeElementRef.current && window.Prism) {
+    // Highlight if visible (activeTab is code OR isGenerating)
+    const isCodeVisible = !isMobile && (activeTab === 'code' || isGenerating);
+
+    if (isCodeVisible && codeElementRef.current && window.Prism) {
       window.Prism.highlightElement(codeElementRef.current);
     }
-  }, [activeFile, preview, activeTab, isMobile]);
+  }, [activeFile, preview, activeTab, isMobile, isGenerating]);
 
   // Build File Tree
   const fileTree = useMemo(() => {
@@ -122,7 +126,21 @@ const CodePreview: React.FC<CodePreviewProps> = ({
       console.log("CodePreview: Found index.html length:", htmlFile.length);
 
       const cssFile = preview.files.find(f => f.name === 'styles.css')?.content || '';
-      const jsFile = preview.files.find(f => f.name === 'script.js')?.content || '';
+      // Gather and concatenate all JS/JSX files to simulate a bundle
+      const scriptFiles = preview.files.filter(f => /\.(js|jsx|ts|tsx)$/.test(f.name));
+      scriptFiles.sort((a, b) => {
+        const isEntryA = ['main.jsx', 'index.jsx', 'script.js', 'App.jsx'].includes(a.name);
+        const isEntryB = ['main.jsx', 'index.jsx', 'script.js', 'App.jsx'].includes(b.name);
+        if (isEntryA && !isEntryB) return 1;
+        if (!isEntryA && isEntryB) return -1;
+        return 0;
+      });
+      let bundledJs = scriptFiles.map(f => f.content).join('\n\n');
+      // Strip module syntax (imports/exports) for simple browser fallback
+      bundledJs = bundledJs
+        .replace(/^\s*import\s+.*$/gm, '// $&')
+        .replace(/^\s*export\s+default\s+/gm, '')
+        .replace(/^\s*export\s+/gm, '');
       // ...
 
       let fullHtml = htmlFile;
@@ -244,12 +262,85 @@ const CodePreview: React.FC<CodePreviewProps> = ({
           : tailwindScript + fullHtml;
       }
 
-      // Inject JS
-      if (jsFile) {
-        fullHtml = fullHtml.includes('</body>')
-          ? fullHtml.replace('</body>', `<script>${jsFile}</script></body>`)
-          : fullHtml + `<script>${jsFile}</script>`;
+      // Ensure React & Babel are present for JSX rendering
+      if (!fullHtml.includes('react.development.js')) {
+        const reactScripts = `
+          <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+          <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+          <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+        `;
+        fullHtml = fullHtml.includes('<head>')
+          ? fullHtml.replace('<head>', `<head>${reactScripts}`)
+          : reactScripts + fullHtml;
       }
+
+      // Inject JS logic - processed as Babel/JSX
+      // Inject JS logic - processed as Babel/JSX
+      if (bundledJs) {
+        // Global Shim for Imports + Execution
+        const globalShim = `
+          <script>
+            console.log("Shim executing...");
+            window.React = React;
+            window.ReactDOM = ReactDOM;
+            const { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext, useReducer, useLayoutEffect } = React;
+            console.log("Shim loaded. React available:", !!window.React);
+          </script>
+        `;
+
+        // Refined Regex for stripping modules
+        const safeJs = bundledJs
+          .replace(/import\s+React\s*(?:,\s*{[^}]*})?\s*from\s+['"]react['"];?/g, '')
+          .replace(/import\s+ReactDOM\s*from\s+['"]react-dom(?:\/client)?['"];?/g, '')
+          .replace(/import\s+{[^}]*}\s*from\s+['"]react['"];?/g, '')
+          .replace(/import\s+.*from\s+['"].*['"];?/g, '') // Catch-all for other imports
+          .replace(/export\s+default\s+/g, '')
+          .replace(/export\s+(const|var|let|function|class|type|interface)/g, '$1');
+
+        // Added 'typescript' preset to handle TS/TSX files
+        const scriptTag = `<script type="text/babel" data-presets="env,react,typescript">
+          console.log("Bundled script executing...");
+          try {
+            ${safeJs}
+            
+            // Auto-mount shim
+            setTimeout(() => {
+              const root = document.getElementById('root');
+              if (root && root.innerHTML === '' && typeof App !== 'undefined') {
+                console.log('Auto-mounting App component...');
+                const rootInstance = ReactDOM.createRoot(root);
+                rootInstance.render(<App />);
+              }
+            }, 100);
+          } catch (err) {
+            console.error("Execution error:", err);
+            throw err;
+          }
+        </script>`;
+
+        fullHtml = fullHtml.includes('</body>')
+          ? fullHtml.replace('</body>', `${globalShim}${scriptTag}</body>`)
+          : fullHtml + globalShim + scriptTag;
+      }
+
+      // Add Error Overlay Script for runtime debugging
+      const errorScript = `
+        <script>
+          window.addEventListener('error', function(e) {
+            const err = document.createElement('div');
+            err.style.cssText = 'position:fixed;top:0;left:0;right:0;background:rgba(255,0,0,0.9);color:white;padding:20px;z-index:9999;font-family:monospace;white-space:pre-wrap;';
+            err.innerText = 'RUNTIME ERROR: ' + e.message + '\\nLine: ' + e.lineno;
+            document.body.appendChild(err);
+          });
+          window.addEventListener('unhandledrejection', function(e) {
+            const err = document.createElement('div');
+            err.style.cssText = 'position:fixed;top:50px;left:0;right:0;background:rgba(255,100,0,0.9);color:white;padding:20px;z-index:9999;font-family:monospace;white-space:pre-wrap;';
+            err.innerText = 'PROMISE ERROR: ' + (e.reason ? (e.reason.message || e.reason) : 'Unknown reason');
+            document.body.appendChild(err);
+          });
+        </script>
+      `;
+      fullHtml = fullHtml.replace('<body>', '<body>' + errorScript);
 
       setCombinedHtml(fullHtml);
       // setIframeKey(prev => prev + 1); // REMOVED: Do not auto-increment key, just update html. 
@@ -264,8 +355,12 @@ const CodePreview: React.FC<CodePreviewProps> = ({
       onTabChange?.('preview');
       return;
     }
-    if (isGenerating) onTabChange?.('code');
-    else if (preview) onTabChange?.('preview');
+    // Only switch to code tab once we actually have files to show (Live Coding)
+    // allowing the "Architecting..." animation to show in Preview tab first.
+    if (isGenerating && preview?.files && preview.files.length > 0) {
+      onTabChange?.('code');
+    }
+    // else if (preview) onTabChange?.('preview'); // User requested to disable auto-preview switch
   }, [isGenerating, preview, isMobile]);
 
   const toggleFolder = (path: string) => {
@@ -326,9 +421,14 @@ const CodePreview: React.FC<CodePreviewProps> = ({
   // Mobile View: Pure Preview Iframe Logic merged below for consistent FullScreen handling
   // if (isMobile) { ... } REMOVED to allow unified FullScreen logic
 
+  // Override activeTab locally during generation to enforce 'code' view (Live Coding)
+  // BUT only after files have started generated. Before that, show 'preview' (Architecting animation).
+  const hasFiles = preview?.files && preview.files.length > 0;
+  const effectiveTab = (isGenerating && !isMobile && hasFiles) ? 'code' : activeTab;
+
   // Unified View
   return (
-    <div className={`flex flex-col bg-vibe-500 transition-all duration-300 ${isFullScreen || (isMobile && activeTab === 'preview') ? 'fixed inset-0 z-[100]' : 'h-full w-full'}`}>
+    <div className={`flex flex-col bg-vibe-500 transition-all duration-300 ${isFullScreen || (isMobile && effectiveTab === 'preview') ? 'fixed inset-0 z-[100]' : 'h-full w-full'}`}>
       {/* Floating Minimize Button for Full Screen Mode */}
       {isFullScreen && (
         <button
@@ -343,7 +443,7 @@ const CodePreview: React.FC<CodePreviewProps> = ({
       {/* Main Content Area */}
       <div className="flex-1 flex overflow-hidden relative">
         {/* File Explorer - Only visible in Code tab */}
-        {activeTab === 'code' && !isMobile && ( // Hide explorer on mobile generally unless requested, keeping simplified
+        {effectiveTab === 'code' && !isMobile && ( // Hide explorer on mobile generally unless requested, keeping simplified
           <div className="w-64 flex-none bg-vibe-500 border-r border-vibe-300 flex flex-col animate-in slide-in-from-left-5 duration-200">
             <div className="h-8 flex items-center px-4 text-[10px] font-bold text-vibe-200 uppercase tracking-widest mt-2">
               Explorer
@@ -373,7 +473,7 @@ const CodePreview: React.FC<CodePreviewProps> = ({
 
         {/* Editor or Preview */}
         <div className="flex-1 flex flex-col min-w-0 bg-vibe-500 h-full relative">
-          {activeTab === 'code' ? (
+          {effectiveTab === 'code' ? (
             <div ref={codeContainerRef} className="absolute inset-0 overflow-auto custom-scrollbar bg-vibe-500 p-6">
               <pre className="!bg-transparent !m-0 !p-0 font-mono text-sm leading-relaxed">
                 <code ref={codeElementRef} className={`language-${activeFile.endsWith('html') ? 'html' : activeFile.endsWith('css') ? 'css' : 'javascript'}`}>
