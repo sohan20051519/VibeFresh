@@ -98,6 +98,13 @@ export const generateCodeStream = async (
     - **Language**: JSX (JavaScript XML). Use .jsx extensions for React files.
     - **Theme**: LIGHT MODE BY DEFAULT (Unless requested otherwise). Ensure high contrast and accessibility.
     - **Base**: Modern CSS Variables & Utility Classes.
+    
+    - **Responsiveness**: MOBILE-PERFECT & SCALABLE (CRITICAL).
+      - **Typography**: Do NOT use oversized fonts on mobile. Use 'text-base' or 'text-lg' for body. Use 'text-3xl' to 'text-5xl' for headings, but scale effectively (e.g., 'text-3xl md:text-5xl').
+      - **Layout**: Avoid sparse layouts. Ensure content density is appropriate. Use 'max-w-7xl mx-auto' containers.
+      - **Spacing**: Use responsive padding (e.g., 'p-4 md:p-8'). Avoid excessive whitespace on smaller screens.
+      - **Grid/Flex**: Use 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' patterns.
+
     - **Visual Style** (ULTRA-MODERN & COMPULSORY):
       - **Bento Grids**: Organize content in modular, rounded blocks (Apple-style) for at least one section.
       - **Glassmorphism 2.0**: High blur, transparency, white borders. REQUIRED for Headers and Floating Cards.
@@ -105,33 +112,39 @@ export const generateCodeStream = async (
       - **Noise & Grain**: You MUST add a subtle SVG noise overlay to the background ('opacity: 0.05').
       - **Background**: Modern Mesh Gradients or Particle Animations (floating CSS dots).
 
-    - **Styling**: Use Tailwind CSS. Mix 'backdrop-blur' utilities with subtle 'shadow-lg'.
-    - **Responsiveness**: MOBILE-PERFECT.
-
-    INTERACTION & ANIMATION IMPLEMENTATION (MANDATORY - USE ALL):
+    INTERACTION & ANIMATION IMPLEMENTATION (MANDATORY - USE ALL 20):
     - **Global Animations in 'styles.css'**:
       - '@keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }'
       - '@keyframes reveal { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }'
       - '@keyframes marquee { 0% { transform: translateX(0%); } 100% { transform: translateX(-100%); } }'
       - '@keyframes noise { 0%, 100% { background-position: 0 0; } 10% { background-position: -5% -10%; } 20% { background-position: -15% 5%; } 30% { background-position: 7% -25%; } 40% { background-position: 20% 25%; } 50% { background-position: -25% 10%; } 60% { background-position: 15% 5%; } 70% { background-position: 0% 15%; } 80% { background-position: 25% 35%; } 90% { background-position: -10% 10%; } }'
 
-    - **Compulsory Features (DO NOT SKIP ANY)**:
-      1. **Kinetic Typography**: Giant, moving text (marquee) in Hero. Use 'animate-marquee' class.
-      2. **Micro-Interactions**: Buttons MUST magnetize/scale on hover. Icons MUST morph/rotate.
-      3. **Preloader Reveals**: Initial "curtain" slide-up animation covering the screen then revealing content.
-      4. **3D Tilt Cards**: Interactive 3D tilt on ALL cards (CSS 'perspective: 1000px' + 'rotateX/Y').
-      5. **Text Reveals**: Staggered, clipped text entry from bottom.
-      6. **Scrollytelling**: Sticky background with scrolling foreground text in "How it Works".
-      7. **Parallax**: Background layers moving slower than foreground.
-      8. **Sticky Card Stacking**: Sections sliding up and stacking (deck effect) in Testimonials.
-      9. **Horizontal Scroll**: One section MUST scroll horizontally (e.g., Timeline/Gallery).
-      10. **Image Reveal**: Images unmask/grow when entering viewport.
-      11. **3D Scroll Effects**: Text or objects MUST rotate/zoom in 3D based on scroll position (use 'transform: rotateX(scrollVal) scale(scrollVal)').
-
-    - **Implementation**:
-      - **SCROLL OBSERVING**: Use 'IntersectionObserver' in 'main.jsx' to toggle '.visible' on '.reveal-on-scroll' elements.
-      - **Card Hover**: 'transform: translateY(-10px) scale(1.02)' + shadow increase.
-      - **Base Animation**: 'animation: reveal 0.8s ease-out forwards' for Hero.
+    - **Compulsory Features (ALL MUST BE PRESENT)**:
+      1. **Bento Grids (Bento UI)**: Modular, rounded rectangular blocks for content organization (mobile-friendly).
+      2. **Glassmorphism 2.0**: High background blur, transparency, and white borders on floating elements.
+      3. **Kinetic Typography**: Giant, bold, moving text (marquee/outline-only) in Hero using 'animate-marquee'.
+      4. **Noise & Grain**: Subtle film grain overlay on backgrounds for warmth.
+      5. **Micro-Interactions**: Buttons magnetize/scale on hover. Icons morph/rotate.
+      6. **Preloader Reveals**: "Curtain visual" slide-up animation revealing content.
+      7. **3D Object Manipulation**: Interactive 3D items (using CSS 3D or pseudo-3D) that rotate/drag.
+      8. **Text Reveals**: Staggered, clipped text entry from bottom (y-axis).
+      9. **Scrollytelling**: Sticky background with scrolling foreground text in "How it Works".
+      10. **Parallax Scrolling**: Background layers moving slower than foreground (subtle).
+      11. **Sticky Card Stacking**: Sections sliding up and stacking like a deck of cards.
+      12. **Horizontal Scroll Sections**: One section MUST scroll horizontally (e.g., Timeline/Gallery).
+      13. **Image Reveal / Masking**: Images grow, unmask, or sharpen when entering viewport.
+      14. **Scroll Fade/Slide-in**: Staggered timing for all grids/cards on scroll.
+      15. **3D Tilt Cards**: CSS 'perspective: 1000px' + 'rotateX/Y' on hover/scroll.
+      16. **Magnetic Buttons**: Buttons subtly move towards cursor on hover.
+      17. **Neumorphism**: Soft extruded shadows for tactile buttons.
+      18. **Particle Animations**: Dynamic, floating particles in Hero background.
+      19. **Morphing Shapes**: Smooth SVG or border-radius transitions (e.g., button to circle).
+      20. **3D Scroll Effects**: Text/objects rotate/zoom based on scroll position using 'transform'.
+    
+    - **Implementation Details**:
+      - **SCROLL OBSERVING**: Use 'IntersectionObserver' (or a hook) to toggle '.visible' class on '.reveal-on-scroll' elements.
+      - **Responsiveness**: Ensure these effects do NOT break mobile layout (use media queries to disable complex 3D on small screens if needed, but keep the vibe).
+      - **Performance**: Use 'will-change: transform' for heavy animations.
 
     REQUIRED PAGE (SINGLE LANDING PAGE ONLY):
     1.  **Home/Landing** (LONG SCROLLING PAGE):
