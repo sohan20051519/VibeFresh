@@ -161,11 +161,12 @@ export const generateCodeStream = async (
       - Do NOT include script tags for React/Babel manually; the environment handles injection.
       - JUST provide the container: <div id="root"></div>.
 
-    CRITICAL:
-    - Do not output markdown code blocks (triple backticks). Just the XML tags.
-    - Before starting a file, output a log line on a new line: 
-      [STATUS] Writing filename.ext...
-    - Ensure the code is complete and functional.
+    CRITICAL OUTPUT RULES:
+    1.  **NO MARKDOWN**: Do not use markdown code blocks (triple backticks). Just output the raw XML tags.
+    2.  **NO EMPTY FILES**: Every <file> tag MUST contain the COMPLETE code for that file. Never output an empty file or a file with just comments.
+    3.  **FULL REWRITES**: If you touch a file, output the *entire* file content. Do not use placeholders like '// ... rest of code'.
+    4.  **STATUS LOGS**: Before starting a file, strictly output a log line: '[STATUS] Writing filename.ext...'
+    5.  **VALIDITY**: Ensure the code is syntactically correct and fully functional.
   `;
 
   const chat = ai.chats.create({
@@ -182,7 +183,7 @@ export const generateCodeStream = async (
   if (currentFiles.length > 0) {
     fullPrompt += "CURRENT PROJECT STATE:\n";
     currentFiles.forEach(f => {
-      fullPrompt += `<file name="${f.name}">\n${f.content}\n</file>\n`;
+      fullPrompt += `< file name = "${f.name}" >\n${f.content} \n </file>\n`;
     });
     fullPrompt += "\n";
   }
