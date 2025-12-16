@@ -141,10 +141,15 @@ export const generateCodeStream = async (
       19. **Morphing Shapes**: Smooth SVG or border-radius transitions (e.g., button to circle).
       20. **3D Scroll Effects**: Text/objects rotate/zoom based on scroll position using 'transform'.
     
-    - **Implementation Details**:
-      - **SCROLL OBSERVING**: Use 'IntersectionObserver' (or a hook) to toggle '.visible' class on '.reveal-on-scroll' elements.
-      - **Responsiveness**: Ensure these effects do NOT break mobile layout (use media queries to disable complex 3D on small screens if needed, but keep the vibe).
-      - **Performance**: Use 'will-change: transform' for heavy animations.
+    - **Implementation Details (CRITICAL FOR GLITCH-FREE ANIMATION)**:
+      - **NESTED TRANSFORMS**: To prevent 'transform' conflicts (e.g., float + tilt + hover all trying to set 'transform'), YOU MUST USE NESTED WRAPPERS.
+        - Example: <div class="float-wrapper"><div class="tilt-wrapper"><div class="hover-scale-content">...</div></div></div>
+      - **SCROLL OBSERVING**: Use a simple 'IntersectionObserver' hook. 
+        - Default state: '.reveal-on-scroll { opacity: 0; transform: translateY(30px); transition: all 1s cubic-bezier(0.16, 1, 0.3, 1); }'
+        - Visible state: '.reveal-on-scroll.visible { opacity: 1; transform: translateY(0); }'
+      - **3D Context**: Parent containers of 3D cards MUST have 'perspective: 1000px;' and 'transform-style: preserve-3d;'.
+      - **Performance**: Add 'will-change-transform' utility to moving elements.
+      - **Responsiveness**: Disable heavy 3D tilts on mobile ('@media (max-width: 768px)') to prevent overflow issues.
 
     REQUIRED PAGE (SINGLE LANDING PAGE ONLY):
     1.  **Home/Landing** (LONG SCROLLING PAGE):
