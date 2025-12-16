@@ -29,6 +29,7 @@ interface CodePreviewProps {
   isFullScreen?: boolean;
   onToggleFullScreen?: () => void;
   refreshKey?: number; // Added prop
+  isPublished?: boolean; // New prop
 }
 
 interface FileNode {
@@ -54,7 +55,8 @@ const CodePreview: React.FC<CodePreviewProps> = ({
   viewport = 'desktop',
   isFullScreen = false,
   onToggleFullScreen,
-  refreshKey = 0 // Default
+  refreshKey = 0, // Default
+  isPublished = false
 }) => {
   // const [activeTab, setActiveTab] = useState<'preview' | 'code'>('preview'); 
   const [activeFile, setActiveFile] = useState<string>('index.html');
@@ -482,7 +484,7 @@ const CodePreview: React.FC<CodePreviewProps> = ({
               </pre>
             </div>
           ) : (
-            <div className={`absolute inset-0 flex items-center justify-center bg-[#121212] ${isMobile ? 'p-0' : 'p-8'}`}>
+            <div className={`absolute inset-0 flex items-center justify-center bg-[#121212] ${isMobile || isPublished ? 'p-0' : 'p-8'}`}>
               {/* Thinking State Overlay: Show ONLY if generating AND no files yet (Architecting Phase) */}
               {isGenerating && (!preview?.files || preview.files.length === 0) ? (
                 <div className="flex flex-col items-center justify-center gap-4 animate-in fade-in zoom-in duration-500">
@@ -499,8 +501,8 @@ const CodePreview: React.FC<CodePreviewProps> = ({
                 </div>
               ) : (
                 <div className={`h-full bg-white transition-all duration-500 ease-in-out shadow-2xl overflow-hidden ${
-                  // On mobile, force full width/height with no borders if full screen or just mobile view
-                  isMobile ? 'w-full h-full rounded-none border-0' :
+                  // On mobile OR published view, force full width/height with no borders
+                  isMobile || isPublished ? 'w-full h-full rounded-none border-0' :
                     viewport === 'mobile' ? 'w-[375px] rounded-[2rem] border-[8px] border-[#333]' :
                       viewport === 'tablet' ? 'w-[768px] rounded-[1.5rem] border-[8px] border-[#333]' :
                         'w-full rounded-lg border border-[#333]'

@@ -11,6 +11,7 @@ import LoginPage from './components/LoginPage';
 import SignupPage from './components/SignupPage';
 import Sidebar from './components/Sidebar';
 import JoinPage from './components/JoinPage';
+import PublishedView from './components/PublishedView';
 
 import { projectService } from './services/projectService';
 
@@ -246,10 +247,11 @@ const AppContent: React.FC = () => {
     setActiveCodeTab('preview'); // Reset to preview when opening history
   };
 
-  const showNavbar = location.pathname !== '/signin' && location.pathname !== '/signup';
+  const isPublishedView = location.pathname.includes('/built/preview/');
+  const showNavbar = location.pathname !== '/signin' && location.pathname !== '/signup' && !isPublishedView;
   const transparentNavbar = location.pathname === '/';
   // Workspace specific navbar props
-  const isWorkspace = location.pathname.startsWith('/built');
+  const isWorkspace = location.pathname.startsWith('/built') && !isPublishedView;
 
   if (loading) return <div className="h-screen bg-black flex items-center justify-center text-white">Loading VibeFresh...</div>;
 
@@ -429,6 +431,11 @@ const AppContent: React.FC = () => {
                 />
               </RequireAuth>
             } />
+
+            {/* Published View Route - Accessible without Auth? Maybe, but user implies public. 
+                "if we open this link the same generated website should open... in complete full screen".
+                We'll allow it public. */}
+            <Route path="/built/preview/:projectId" element={<PublishedView />} />
 
             {/* Join Project Route */}
             <Route path="/join" element={<JoinPage />} />

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { AppState, GeneratedPreview } from '../types';
 import { Layout, Github, Twitter, ArrowLeft, Download, Menu, User, LogOut, CreditCard, Code2, Eye, Smartphone, Tablet, Monitor, Maximize2, Minimize2, UserPlus, Globe, Copy, Check, X, RotateCw } from 'lucide-react';
 import JSZip from 'jszip';
@@ -176,10 +177,12 @@ const Navbar: React.FC<NavbarProps> = ({
 
   const handlePublish = () => {
     setIsPublishing(true);
-    // Simulate API call
+    // Simulate API call / deployment process
     setTimeout(() => {
       setIsPublishing(false);
-      setPublishedUrl(`https://vibefresh.app/p/${activeProjectId || 'demo'}`);
+      // Construct the local preview URL
+      const url = `${window.location.origin}/built/preview/${activeProjectId}`;
+      setPublishedUrl(url);
     }, 1500);
   };
 
@@ -340,10 +343,30 @@ const Navbar: React.FC<NavbarProps> = ({
             )}
 
             {/* Publish Button */}
+            {/* Publish Button */}
             <button
-              disabled
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-600/50 text-white/50 text-xs font-bold transition-all cursor-not-allowed border border-white/5"
-              title="Temporarily Disabled"
+              onClick={() => {
+                if (isGenerating) {
+                  alert("Please wait for generation to complete.");
+                  return;
+                }
+                if (activeProjectId) {
+                  setShowPublishDialog(true);
+                } else {
+                  if (preview?.files?.length) {
+                    alert("Project is saving... Please wait for the 'SAVED' badge to appear.");
+                  } else {
+                    alert("Please generate a project first!");
+                  }
+                }
+              }}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all border border-white/5 shadow-lg ${isGenerating
+                ? 'bg-gray-600/50 text-white/50 cursor-wait'
+                : !activeProjectId
+                  ? 'bg-gray-700 text-white/70 hover:bg-gray-600'
+                  : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white shadow-[0_0_15px_rgba(59,130,246,0.4)]'
+                }`}
+              title={activeProjectId ? "Publish to Web" : "Wait for save to publish"}
             >
               <Globe className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Publish</span>
@@ -436,10 +459,10 @@ const Navbar: React.FC<NavbarProps> = ({
       </div>
 
       {/* Share Dialog */}
-      {showShareDialog && (
+      {showShareDialog && createPortal(
         <>
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 animate-in fade-in" onClick={() => setShowShareDialog(false)} />
-          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl p-6 z-[60] animate-in zoom-in-95 duration-200">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] animate-in fade-in" onClick={() => setShowShareDialog(false)} />
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl p-6 z-[10000] animate-in zoom-in-95 duration-200">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-bold text-white flex items-center gap-2">
                 <UserPlus className="w-5 h-5 text-[#57B9FF]" /> Invite Team
@@ -541,14 +564,15 @@ const Navbar: React.FC<NavbarProps> = ({
               </div>
             </div>
           </div>
-        </>
+        </>,
+        document.body
       )}
 
       {/* Publish Dialog */}
-      {showPublishDialog && (
+      {showPublishDialog && createPortal(
         <>
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 animate-in fade-in" onClick={() => setShowPublishDialog(false)} />
-          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[450px] bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl p-8 z-[60] animate-in zoom-in-95 duration-200 text-center">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] animate-in fade-in" onClick={() => setShowPublishDialog(false)} />
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[450px] bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl p-8 z-[10000] animate-in zoom-in-95 duration-200 text-center">
 
             {!publishedUrl ? (
               <>
@@ -611,7 +635,8 @@ const Navbar: React.FC<NavbarProps> = ({
             )}
 
           </div>
-        </>
+        </>,
+        document.body
       )}
     </nav>
   );
