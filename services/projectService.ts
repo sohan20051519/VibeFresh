@@ -4,18 +4,42 @@ import { ProjectFile, HistoryItem } from '../types';
 
 export const projectService = {
     async getUserProjects(userId: string): Promise<HistoryItem[]> {
-        const { data, error } = await supabase
+        // Fetch projects OWNED by the user
+        const owned = await supabase
             .from('projects')
             .select('*')
-            // .eq('user_id', userId) // Removed to allow fetching member projects via RLS
-            .order('updated_at', { ascending: false });
+            .eq('user_id', userId);
 
-        if (error) {
-            console.error('Error fetching projects:', error);
-            return [];
-        }
+        // Fetch projects SHARED with the user (via project_members)
+        const shared = await supabase
+            .from('project_members')
+            .select('project:projects(*)') // Use alias project to get the joined data
+            .eq('user_id', userId);
 
-        return data.map((p: any) => {
+        if (owned.error) console.error('Error fetching owned projects:', owned.error);
+        if (shared.error) console.error('Error fetching shared projects:', shared.error);
+
+        const ownedProjects = owned.data || [];
+        // Extract the actual project data from the nested response
+        // Typescript might complain if 'project' is array or object, usually object for many-to-one
+        const sharedProjects = (shared.data || [])
+            .map((item: any) => item.project)
+            .filter((p: any) => p !== null); // Filter out any nulls if join failed
+
+        // Merge and deduplicate (just in case)
+        const allProjectsMap = new Map();
+        [...ownedProjects, ...sharedProjects].forEach((p: any) => {
+            allProjectsMap.set(p.id, p);
+        });
+
+        const allProjects = Array.from(allProjectsMap.values());
+
+        // Sort by updated_at desc
+        allProjects.sort((a: any, b: any) =>
+            new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+        );
+
+        return allProjects.map((p: any) => {
             let parsedFiles = p.files;
             if (typeof p.files === 'string') {
                 try {
