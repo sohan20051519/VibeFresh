@@ -308,10 +308,15 @@ const CodePreview: React.FC<CodePreviewProps> = ({
             // Auto-mount shim
             setTimeout(() => {
               const root = document.getElementById('root');
-              if (root && root.innerHTML === '' && typeof App !== 'undefined') {
-                console.log('Auto-mounting App component...');
-                const rootInstance = ReactDOM.createRoot(root);
-                rootInstance.render(<App />);
+              if (root && root.innerHTML === '') {
+                if (typeof App !== 'undefined') {
+                  console.log('Auto-mounting App component...');
+                  const rootInstance = ReactDOM.createRoot(root);
+                  rootInstance.render(<App />);
+                } else {
+                  console.error('App component missing');
+                  root.innerHTML = '<div style="color: #ef4444; font-family: monospace; padding: 20px; background: rgba(0,0,0,0.8);"><strong>Launch Error:</strong> "App" component not found.<br/><br/>The generated code might contain syntax errors prevented it from loading, or the "App" component was not properly defined.</div>';
+                }
               }
             }, 100);
           } catch (err) {
@@ -345,7 +350,8 @@ const CodePreview: React.FC<CodePreviewProps> = ({
       fullHtml = fullHtml.replace('<body>', '<body>' + errorScript);
 
       setCombinedHtml(fullHtml);
-      // setIframeKey(prev => prev + 1); // REMOVED: Do not auto-increment key, just update html. 
+      // Force iframe to remount to ensure clean state execution for every update
+      setIframeKey(prev => prev + 1);
     }
   }, [preview]);
 
