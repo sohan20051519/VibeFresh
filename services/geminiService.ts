@@ -86,12 +86,14 @@ export const generateCodeStream = async (
     3. main.jsx (Entry point, ReactDOM rendering)
     4. App.jsx (Main Application component)
     
-    INCREMENTAL UPDATES:
-    - If this is a follow-up request (history exists), you will be provided with the CURRENT FILE CONTENTS.
+    INCREMENTAL UPDATES & FOLLOW-UP REQUESTS:
+    - You will be provided with the "CURRENT PROJECT STATE".
+    - You must ACTUALLY MODIFY these files based on the user's request.
+    - **CRITICAL**: Do not just acknowledge the request. OUTPUT THE MODIFIED CODE.
     - You must ONLY output the files that need to be changed.
     - If a file is not changed, DO NOT output it.
-    - If you change a file, output the FULL content of that file (do not use diffs).
-    - If you need to add a new file, simply output it.
+    - If you change a file, output the FULL content of that file (do not use diffs or placeholders).
+    - If you are adding a new file, output it normally.
 
     DESIGN SYSTEM (STRICT COMPLIANCE REQUIRED):
     - **Framework**: REACT IS MANDATORY. You must write modern React code (Functional Components, Hooks like useState/useEffect).
@@ -249,7 +251,7 @@ export const generateCodeStream = async (
   if (currentFiles.length > 0) {
     fullPrompt += "CURRENT PROJECT STATE:\n";
     currentFiles.forEach(f => {
-      fullPrompt += `< file name = "${f.name}" >\n${f.content} \n </file>\n`;
+      fullPrompt += `<file name="${f.name}">\n${f.content}\n</file>\n`;
     });
     fullPrompt += "\n";
   }
