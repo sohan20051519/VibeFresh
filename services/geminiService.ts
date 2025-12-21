@@ -96,19 +96,30 @@ export const generateCodeStream = async (
     DESIGN SYSTEM (STRICT COMPLIANCE REQUIRED):
     - **Framework**: REACT IS MANDATORY. You must write modern React code (Functional Components, Hooks like useState/useEffect).
     - **Language**: JSX (JavaScript XML). Use .jsx extensions for React files.
-    - **Theme**: LIGHT MODE BY DEFAULT (Unless requested otherwise). Ensure high contrast and accessibility.
+    - **Theme**: DYNAMIC & ADAPTIVE (CRITICAL).
+      - **Analyze Intent**: You MUST analyze the user's prompt to determine the color palette. 
+        - "Nature/Eco" -> Earthy greens, browns, soft beige.
+        - "Tech/SaaS" -> Deep blues, purples, or clean monochrome.
+        - "Energy/Gym" -> Vibrant oranges, reds, electric yellow.
+        - "Luxury" -> Black, gold, white, serif fonts.
+      - **Default**: Only use "Clean Light Mode" if the prompt is neutral.
+      - **Accessibility**: Ensure high contrast regardless of the chosen palette.
     - **Base**: Modern CSS Variables & Utility Classes.
     
     - **Responsiveness**: MOBILE-FIRST STRATEGY (CRITICAL).
       - **Mobile First**: Write classes for mobile FIRST (e.g., 'flex-col'), then add overrides for larger screens (e.g., 'md:flex-row'). Do NOT work backwards.
       - **Typography**: Do NOT use oversized fonts on mobile. Use 'text-base' or 'text-lg' for body. Use 'text-3xl' to 'text-5xl' for headings, but scale effectively (e.g., 'text-3xl md:text-5xl').
-      - **Layout**: Avoid sparse layouts. Ensure content density is appropriate. Use 'max-w-7xl mx-auto' containers.
+      - **Layout (NO TEMPLATES)**: Avoid generic "Bootstrap-style" or boring "Center-Title-Three-Cards" layouts. 
+        - **Creative Freedom**: Use asymmetrical grids, staggered layouts, magazine-style typography, and overlapping elements.
+        - **Uniqueness**: Every section should feel distinct and custom-designed for the specific user prompt.
+        - **Density**: Ensure content density is appropriate. Use 'max-w-7xl mx-auto' containers.
       - **Spacing**: Use responsive padding (e.g., 'p-4 md:p-8'). Avoid excessive whitespace on smaller screens.
       - **Grid/Flex**: Use 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' patterns. Always stack flex containers vertically on mobile ('flex-col md:flex-row').
       - **Margins vs Padding**: Use PADDING for container internal spacing ('p-4') to prevent horizontal scrollbars (overflow).
       - **Images/Video**: Ensure all media has 'max-w-full h-auto' to prevent overflow.
 
     - **Visual Style** (MINIMAL, SLEEK & COMPACT - CRITICAL - AWARD-WINNING AESTHETICS):
+      - **UNIQUE & NON-TEMPLATE**: The design must NOT look like a generic template. It must have a unique "soul" and "vibe".
       - **Premium Feel**: Every pixel must feel polished. Use subtle purposeful animations, not random movement.
       - **Minimalism**: Design must be clean, spacious, and sophisticated. Avoid clutter and "loud" elements.
       - **Proportions**: DO NOT use oversized elements. Cards, fonts, and grids must have standard, professional web proportions. 
@@ -119,7 +130,7 @@ export const generateCodeStream = async (
       - **Glassmorphism 2.0**: High blur, transparency, white borders. REQUIRED for Headers and Floating Cards.
       - **Neumorphism**: Soft extruded shadows for buttons/toggles (tactile feel).
       - **Noise & Grain**: You MUST add a subtle SVG noise overlay to the background ('opacity: 0.05').
-      - **Background**: Modern Mesh Gradients or Particle Animations (floating CSS dots).
+      - **Background**: Modern Mesh Gradients or Particle Animations using the *ADAPTIVE COLOR PALETTE* (not just default blue).
 
     INTERACTION & ANIMATION IMPLEMENTATION (CHOOSE 5-8 BEST FITTING):
     - **Global Animations in 'styles.css'**:
