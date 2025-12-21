@@ -34,8 +34,7 @@ export const creditsService = {
      * Check if user has enough credits for a generation
      */
     async hasEnoughCredits(userId: string): Promise<boolean> {
-        const { credits } = await this.getCredits(userId);
-        return credits >= CREDITS_PER_GENERATION;
+        return true;
     },
 
     /**
@@ -43,35 +42,10 @@ export const creditsService = {
      * Returns the new credit balance, success status, and any error
      */
     async deductCredits(userId: string): Promise<{ newCredits: number; success: boolean; error?: string }> {
-        try {
-            // Get current credits from DB
-            const { credits: currentCredits } = await this.getCredits(userId);
-
-            console.log('Deducting credits. Current:', currentCredits, 'Cost:', CREDITS_PER_GENERATION);
-
-            if (currentCredits < CREDITS_PER_GENERATION) {
-                return { newCredits: currentCredits, success: false, error: 'Not enough credits' };
-            }
-
-            const newCredits = currentCredits - CREDITS_PER_GENERATION;
-
-            // Update credits in database
-            const { error: updateError } = await supabase
-                .from('profiles')
-                .update({ credits: newCredits })
-                .eq('id', userId);
-
-            if (updateError) {
-                console.error('Error updating credits:', updateError);
-                return { newCredits: currentCredits, success: false, error: 'Failed to update credits' };
-            }
-
-            console.log('Credits deducted successfully. New balance:', newCredits);
-            return { newCredits, success: true };
-        } catch (err) {
-            console.error('Unexpected error deducting credits:', err);
-            return { newCredits: 0, success: false, error: 'Unexpected error' };
-        }
+        // Unlimited credits - no deduction
+        // Get current credits just to return a valid number, but don't decrement
+        const { credits } = await this.getCredits(userId);
+        return { newCredits: credits, success: true };
     },
 
     /**

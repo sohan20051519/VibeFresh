@@ -382,14 +382,7 @@ const Navbar: React.FC<NavbarProps> = ({
               onClick={() => setShowProfileMenu(!showProfileMenu)}
               className="flex items-center gap-3 focus:outline-none group"
             >
-              {/* Credits badge - visible on desktop */}
-              <div className={`hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold ${(user.credits || 0) < 25
-                ? 'bg-red-500/20 text-red-400 border border-red-500/30'
-                : 'bg-white/5 text-white/80 border border-white/10'
-                }`}>
-                <CreditCard className="w-3.5 h-3.5" />
-                <span>{user.credits || 0}</span>
-              </div>
+              {/* Credits badge removed */}
 
               <img
                 src={user.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(user.name || user.email || 'User')}&backgroundColor=0369a1`}
@@ -418,21 +411,7 @@ const Navbar: React.FC<NavbarProps> = ({
                     </div>
                   </div>
 
-                  <div className="mb-6 space-y-3">
-                    <div className="flex items-center justify-between text-xs text-white/60 uppercase tracking-wider font-bold">
-                      <span className="flex items-center gap-2"><CreditCard className="w-4 h-4" /> Credits</span>
-                      <span className={`text-white ${(user.credits || 0) < 25 ? 'text-red-400' : ''}`}>{user.credits || 0} / 100</span>
-                    </div>
-                    <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden border border-white/5">
-                      <div
-                        className={`h-full shadow-[0_0_10px_rgba(87,185,255,0.5)] ${(user.credits || 0) < 25
-                          ? 'bg-gradient-to-r from-red-500 to-orange-500'
-                          : 'bg-gradient-to-r from-[#57B9FF] to-purple-500'
-                          }`}
-                        style={{ width: `${Math.min(100, user.credits || 0)}%` }}
-                      ></div>
-                    </div>
-                  </div>
+                  {/* Credits section removed */}
 
                   <button
                     onClick={() => {

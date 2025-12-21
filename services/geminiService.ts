@@ -115,7 +115,7 @@ export const generateCodeStream = async (
       - **Noise & Grain**: You MUST add a subtle SVG noise overlay to the background ('opacity: 0.05').
       - **Background**: Modern Mesh Gradients or Particle Animations (floating CSS dots).
 
-    INTERACTION & ANIMATION IMPLEMENTATION (MANDATORY - USE ALL 20):
+    INTERACTION & ANIMATION IMPLEMENTATION (MANDATORY - USE ALL 19):
     - **Global Animations in 'styles.css'**:
       - '@keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }'
       - '@keyframes reveal { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }'
@@ -132,17 +132,16 @@ export const generateCodeStream = async (
       7. **3D Object Manipulation**: Interactive 3D items (using CSS 3D or pseudo-3D) that rotate/drag.
       8. **Text Reveals**: Staggered, clipped text entry from bottom (y-axis).
       9. **Scrollytelling**: Sticky background with scrolling foreground text in "How it Works".
-      10. **Parallax Scrolling**: Background layers moving slower than foreground (subtle).
-      11. **Sticky Card Stacking**: Sections sliding up and stacking like a deck of cards.
-      12. **Horizontal Scroll Sections**: One section MUST scroll horizontally (e.g., Timeline/Gallery).
-      13. **Image Reveal / Masking**: Images grow, unmask, or sharpen when entering viewport.
-      14. **Scroll Fade/Slide-in**: Staggered timing for all grids/cards on scroll.
-      15. **3D Tilt Cards**: CSS 'perspective: 1000px' + 'rotateX/Y' on hover/scroll.
-      16. **Magnetic Buttons**: Buttons subtly move towards cursor on hover.
-      17. **Neumorphism**: Soft extruded shadows for tactile buttons.
-      18. **Particle Animations**: Dynamic, floating particles in Hero background.
-      19. **Morphing Shapes**: Smooth SVG or border-radius transitions (e.g., button to circle).
-      20. **3D Scroll Effects**: Text/objects rotate/zoom based on scroll position using 'transform'.
+      10. **Sticky Card Stacking**: Sections sliding up and stacking like a deck of cards.
+      11. **Horizontal Scroll Sections**: One section MUST scroll horizontally (e.g., Timeline/Gallery).
+      12. **Image Reveal / Masking**: Images grow, unmask, or sharpen when entering viewport.
+      13. **Scroll Fade/Slide-in**: Staggered timing for all grids/cards on scroll.
+      14. **3D Tilt Cards**: CSS 'perspective: 1000px' + 'rotateX/Y' on hover/scroll.
+      15. **Magnetic Buttons**: Buttons subtly move towards cursor on hover.
+      16. **Neumorphism**: Soft extruded shadows for tactile buttons.
+      17. **Particle Animations**: Dynamic, floating particles in Hero background.
+      18. **Morphing Shapes**: Smooth SVG or border-radius transitions (e.g., button to circle).
+      19. **3D Scroll Effects**: Text/objects rotate/zoom based on scroll position using 'transform'.
 
     - **Implementation Details (CRITICAL FOR GLITCH-FREE ANIMATION)**:
       - **NESTED TRANSFORMS**: To prevent 'transform' conflicts (e.g., float + tilt + hover all trying to set 'transform'), YOU MUST USE NESTED WRAPPERS.

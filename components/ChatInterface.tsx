@@ -242,13 +242,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 {/* Action Buttons */}
                 {msg.role === 'model' && msg.actions && msg.actions.length > 0 && (
                   <div className="flex flex-col gap-2 mt-3 pt-2 border-t border-white/5">
-                    {/* Credits Remaining Info */}
-                    {(msg.creditsRemaining !== undefined && msg.creditsRemaining !== null) && (
-                      <div className="text-xs font-semibold text-emerald-400 mb-1 flex items-center gap-1.5">
-                        <span>💰</span>
-                        <span>{msg.creditsRemaining} credits remaining</span>
-                      </div>
-                    )}
+                    {/* Credits Remaining Info Removed */}
 
                     <div className="flex flex-wrap gap-2">
                       {msg.actions.map(action => {
