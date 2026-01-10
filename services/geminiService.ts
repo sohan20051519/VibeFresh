@@ -17,7 +17,7 @@ export const enhancePrompt = async (originalPrompt: string): Promise<string> => 
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-preview',
+      model: 'gemini-3-flash-preview',
       contents: `You are an expert Prompt Engineer for an AI Coding Assistant named VibeFresh. 
       Your goal is to rewrite the user's raw prompt into a detailed, structured, and high-quality request that yields the best possible code generation results.
       
@@ -46,7 +46,7 @@ export const generateCodeStream = async (
   onFileUpdate: (files: ProjectFile[]) => void
 ): Promise<{ files: ProjectFile[], generatedText: string }> => {
   const ai = getClient();
-  const codeModel = 'gemini-3-pro-preview';
+  const codeModel = 'gemini-3-flash-preview';
 
   const steps: GenerationStep[] = [];
   const addStep = (label: string) => {
