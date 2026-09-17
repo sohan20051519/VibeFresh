@@ -270,6 +270,7 @@ const CodePreview: React.FC<CodePreviewProps> = ({
           <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
           <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
           <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+          <script src="https://unpkg.com/lucide@latest"></script>
         `;
         fullHtml = fullHtml.includes('<head>')
           ? fullHtml.replace('<head>', `<head>${reactScripts}`)
@@ -277,15 +278,71 @@ const CodePreview: React.FC<CodePreviewProps> = ({
       }
 
       // Inject JS logic - processed as Babel/JSX
-      // Inject JS logic - processed as Babel/JSX
       if (bundledJs) {
         // Global Shim for Imports + Execution
         const globalShim = `
           <script>
+            Babel.registerPreset("my-react", {
+              presets: [
+                [Babel.availablePresets["react"], { "runtime": "classic" }]
+              ]
+            });
             console.log("Shim executing...");
             window.React = React;
             window.ReactDOM = ReactDOM;
             const { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext, useReducer, useLayoutEffect } = React;
+
+            window.lucideReact = new Proxy({}, {
+              get(target, prop) {
+                return (props) => {
+                  const propName = prop.toString();
+                  // Map camelCase/PascalCase to kebab-case
+                  const iconName = propName.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+
+                  if (!window.lucide || !window.lucide.icons) return null;
+
+                  // Try to find the icon data in vanilla lucide icons object
+                  // vanilla lucide exports camelCase keys, e.g. arrowRight
+                  const camelCaseName = iconName.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+                  const IconData = window.lucide.icons[propName] || window.lucide.icons[camelCaseName];
+
+                  if (!IconData || !Array.isArray(IconData) || IconData.length < 3) return null;
+
+                  // Lucide icon data format: [tag, attrs, children]
+                  const children = IconData[2];
+
+                  const size = props.size || 24;
+                  const color = props.color || 'currentColor';
+                  const strokeWidth = props.strokeWidth || 2;
+
+                  // Render children to svg string
+                  const svgContent = children.map(child => {
+                    const tag = child[0];
+                    const attrs = Object.entries(child[1] || {}).map(([k, v]) => \`\${k}="\${v}"\`).join(' ');
+                    return \`<\${tag} \${attrs}></\${tag}>\`;
+                  }).join('');
+
+                  // Lucide default attributes
+                  const defaultAttrs = {
+                     xmlns: "http://www.w3.org/2000/svg",
+                     width: size,
+                     height: size,
+                     viewBox: "0 0 24 24",
+                     fill: "none",
+                     stroke: color,
+                     strokeWidth: strokeWidth,
+                     strokeLinecap: "round",
+                     strokeLinejoin: "round",
+                  };
+
+                  return React.createElement('svg', {
+                    ...defaultAttrs,
+                    ...props,
+                    dangerouslySetInnerHTML: { __html: svgContent }
+                  });
+                };
+              }
+            });
             console.log("Shim loaded. React available:", !!window.React);
           </script>
         `;
@@ -295,12 +352,15 @@ const CodePreview: React.FC<CodePreviewProps> = ({
           .replace(/import\s+React\s*(?:,\s*{[^}]*})?\s*from\s+['"]react['"];?/g, '')
           .replace(/import\s+ReactDOM\s*from\s+['"]react-dom(?:\/client)?['"];?/g, '')
           .replace(/import\s+{[^}]*}\s*from\s+['"]react['"];?/g, '')
+          .replace(/import\s+({[^}]+})\s*from\s+['"]lucide-react['"];?/g, (match, p1) => {
+            return `const ${p1.replace(/\s+as\s+/g, ': ')} = window.lucideReact;`;
+          })
           .replace(/import\s+.*from\s+['"].*['"];?/g, '') // Catch-all for other imports
           .replace(/export\s+default\s+/g, '')
           .replace(/export\s+(const|var|let|function|class|type|interface)/g, '$1');
 
         // Added 'typescript' preset to handle TS/TSX files
-        const scriptTag = `<script type="text/babel" data-presets="env,react,typescript">
+        const scriptTag = `<script type="text/babel" data-presets="env,my-react,typescript">
           console.log("Bundled script executing...");
           try {
             ${safeJs}
