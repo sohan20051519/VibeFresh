@@ -306,10 +306,10 @@ const CodePreview: React.FC<CodePreviewProps> = ({
                   const camelCaseName = iconName.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
                   const IconData = window.lucide.icons[propName] || window.lucide.icons[camelCaseName];
 
-                  if (!IconData || !Array.isArray(IconData) || IconData.length < 3) return null;
+                  if (!IconData || !Array.isArray(IconData)) return null;
 
-                  // Lucide icon data format: [tag, attrs, children]
-                  const children = IconData[2];
+                  // Lucide icon data format is an array of shapes: [ ['path', {d: '...'}], ... ]
+                  const children = IconData;
 
                   const size = props.size || 24;
                   const color = props.color || 'currentColor';
